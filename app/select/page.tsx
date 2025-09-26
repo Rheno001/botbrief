@@ -41,12 +41,12 @@ const frequencyOptions = [
         name: "Daily",
         description: "Everyday"
     },
-     {
+    {
         id: "weekly",
         name: "Weekly",
         description: "Once every week"
     },
-     {
+    {
         id: "biweekly",
         name: "Biweekly",
         description: "Twice every week"
@@ -66,31 +66,36 @@ export default function SelectPage() {
 
 
     return <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-4xl mx-auto p-8">
-            <div className="text-center">
-                <h1 className="text-4xl font-bold text-gray-800">Customize your Newsletter</h1>
-                <p>Select your interests and delivery frequency to start receiving personalized newletters</p>
+        <div className="max-w-5xl w-full mx-auto p-8">
+            {/* Header */}
+            <div className="text-center mb-10">
+                <h1 className="text-4xl font-extrabold text-gray-800">Customize your Newsletter</h1>
+                <p className="mt-3 text-lg text-gray-600">
+                    Select your interests and delivery frequency to start receiving personalized newsletters
+                </p>
             </div>
-            <form>
-                {/**Category */}
+
+            <form className="space-y-12">
+                {/* Categories */}
                 <div>
-                    <h2>Choose your categories</h2>
-                    <p>Select topics you'd like to see in your newsletter</p>
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">Choose your Categories</h2>
+                    <p className="text-gray-600 mb-6">Pick topics you’d like to see in your newsletter</p>
+
+                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {categories.map((category, key) => {
                             const isSelected = selectedCategories.includes(category.id);
 
                             return (
                                 <label
                                     key={key}
-                                    className={`flex items-start p-4 border rounded-2xl shadow-sm cursor-pointer transition hover:shadow-md 
-          ${isSelected ? "bg-green-100 border-green-400" : "bg-white border-gray-200"}`}
+                                    className={`flex items-start p-5 border rounded-2xl shadow-sm cursor-pointer transition hover:shadow-md 
+                  ${isSelected ? "bg-green-100 border-green-400" : "bg-white border-gray-200"}`}
                                 >
                                     <input
                                         type="checkbox"
                                         checked={isSelected}
                                         onChange={() => handleCategoryToggle(category.id)}
-                                        className="mt-1 h-5 w-5 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
+                                        className="mt-1 h-5 w-5 text-green-600 rounded border-gray-300 focus:ring-green-500"
                                     />
 
                                     <div className="ml-3">
@@ -101,27 +106,68 @@ export default function SelectPage() {
                             );
                         })}
                     </div>
-                    <div>
-                        {selectedCategories.length} Categor
-                        {selectedCategories.length !== 1 ? "ies" : "y"} selected 
+
+                    {/* Selection count */}
+                    <div className="mt-4 text-sm text-gray-600">
+                        <span className="font-medium text-gray-800">{selectedCategories.length}</span>{" "}
+                        Categor{selectedCategories.length !== 1 ? "ies" : "y"} selected
                     </div>
-
                 </div>
-                {/**Category */}
-                <div>
-                    <h2>Delivery Frequency</h2>
-                    <p>How often do you want to receive newsletters?</p>
 
-                    <div>
+                {/* Frequency */}
+                <div>
+                    <h2 className="text-2xl font-semibold text-gray-800 mb-2">Delivery Frequency</h2>
+                    <p className="text-gray-600 mb-6">How often do you want to receive newsletters?</p>
+
+                    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
                         {frequencyOptions.map((frequency, key) => (
-                            <label>
-                                <input type="radio" checked={selectedFrequency === frequency.id} onChange={() => setselectedFrequency(frequency.id)}/>
+                            <label
+                                key={key}
+                                className={`cursor-pointer rounded-2xl border p-5 shadow-sm transition hover:shadow-md 
+                ${selectedFrequency === frequency.id ? "bg-green-100 border-green-400" : "bg-white border-gray-200"}`}
+                            >
+                                <input
+                                    className="sr-only"
+                                    type="radio"
+                                    checked={selectedFrequency === frequency.id}
+                                    onChange={() => setselectedFrequency(frequency.id)}
+                                />
+                                <div className="flex items-center justify-between">
+                                    <div className="text-gray-800 font-medium">{frequency.name}</div>
+                                    <div>
+                                        {selectedFrequency === frequency.id && (
+                                            <div className="h-4 w-4 rounded-full bg-green-500"></div>
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="mt-2 text-sm text-gray-600">{frequency.description}</div>
                             </label>
                         ))}
-
                     </div>
+                    <div className="mt-4 text-sm text-gray-600">
+                        <span className="font-medium text-gray-600">{selectedCategories.length}</span>{" "}
+                        Categor{selectedCategories.length !== 1 ? "ies" : "y"} selected
+                        <span className="font-medium text-gray-600">{" " + selectedFrequency}</span>{" "} delivery
+                    </div>
+                </div>
+
+                {/* Submit Button */}
+                <div className="text-center">
+                    <button
+                        type="submit"
+                        disabled={selectedCategories.length === 0}
+                        className={`px-8 py-3 text-lg font-medium rounded-xl shadow-md transition 
+    ${selectedCategories.length === 0
+                                ? "bg-gray-300 text-gray-500 cursor-not-allowed"
+                                : "bg-green-600 text-white hover:bg-green-700"
+                            }`}
+                    >
+                        Save Preferences
+                    </button>
+
                 </div>
             </form>
         </div>
     </div>
+
 }
