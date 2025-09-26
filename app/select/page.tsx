@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
 
 const categories = [
     {
@@ -58,8 +60,45 @@ const frequencyOptions = [
 export default function SelectPage() {
     const [selectedCategories, setselectedCategories] = useState<string[]>([]);
     const [selectedFrequency, setselectedFrequency] = useState<string>("weekly");
+    const { user } = useAuth();
+    const router = useRouter();
+
     function handleCategoryToggle(categoryId: string) {
         setselectedCategories((prev) => prev.includes(categoryId) ? prev.filter((id) => id !== categoryId) : [...prev, categoryId])
+
+    }
+
+    async function handleSavePreferences (e: FormEvent){
+        e.preventDefault();
+        if(selectedCategories.length === 0){
+            alert("Please select at least one category")
+            return
+        }
+        if (!user){
+            alert("Please sign In to continue")
+            return;
+        }
+        try{
+            const response = await fetch("/api/user-preferences",{
+                method: "POST",
+                headers: { "Content-Type": "application/json"},
+                body: JSON.stringify({
+                    categories: selectedCategories,
+                    frequency: selectedFrequency,
+                    email: user.email,
+                }),
+            })
+            if(!response.ok){
+                throw new Error("Failed to save preferences")
+            }
+            alert("Your newsletter preferences have been saved. You will start receiving them soon.");
+            router.push("/dashboard")
+
+        }catch(error){
+            alert("Failed to save preferences, please try again")
+        }
+
+
 
     }
 
@@ -75,7 +114,7 @@ export default function SelectPage() {
                 </p>
             </div>
 
-            <form className="space-y-12">
+            <form onSubmit={handleSavePreferences} className="space-y-12">
                 {/* Categories */}
                 <div>
                     <h2 className="text-2xl font-semibold text-gray-800 mb-2">Choose your Categories</h2>
